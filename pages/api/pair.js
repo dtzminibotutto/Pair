@@ -8,7 +8,12 @@ export default async function handler(req, res) {
 
   try {
     const backendRes = await fetch(`${process.env.RAILWAY_URL}/pair?number=${number}`);
-    const data = await backendRes.json();
+if (!backendRes.ok) {
+  const errText = await backendRes.text();
+  console.error('Backend error:', errText);
+  throw new Error('Backend fetch failed');
+}
+const data = await backendRes.json();
     res.status(200).json({ code: data.code });
   } catch (err) {
     console.error(err);
